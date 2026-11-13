@@ -3,6 +3,7 @@ package project;
 public class Todo {
     String deadLine;
     String todoName;
+    Boolean state;
 
     public Todo(String deadLine, String todoName) {
         this.deadLine = deadLine;
