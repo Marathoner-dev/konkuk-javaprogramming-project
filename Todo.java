@@ -25,4 +25,13 @@ public class Todo {
     public void setTodoName(String todoName) {
         this.todoName = todoName;
     }
+
+    public Boolean getState() {
+        return state;
+    }
+
+    public void setState(Boolean state) {
+        this.state = state;
+    }
 }
+
