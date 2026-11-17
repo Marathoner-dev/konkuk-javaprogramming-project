@@ -147,7 +147,50 @@ public class Menu {
             default -> {System.out.println("다시 입력하세요"); modifyTodo();}
         }
     }
-
+    public void progressShow(){
+        showSubjects();
+        System.out.println("1.과목별 진척도");
+        System.out.println("2.날 진척도");
+        int choice=scan.nextInt();
+        switch (choice){
+            case 1->{
+                System.out.println("과목 선택>> ");
+                int num=scan.nextInt();
+                if (num < 1 || num > subjects.size()) {
+                    System.out.println("잘못된 번호입니다.");
+                    return;
+                }
+                Subject sub=subjects.get(num-1);
+                int done=0;
+                for(int i=0;i<sub.getTodos().toArray().length;i++){
+                    if(sub.getTodos().get(i).getState()==true){done++;}
+                }
+                double progress=(double)done/sub.getTodos().size()*100;
+                System.out.println(sub.getName()+"의 진척도 : "+(int)progress+"%");
+            }
+            case 2->{
+                String str= scan.next();
+                scan.nextLine();
+                if(str.length()!=8){
+                    System.out.println("기간은 8자리로 작성하시오! ex)20261120");return;
+                }
+                int all=0;int done=0;
+                for(int i=0;i<subjects.toArray().length;i++){
+                    for(int j=0;j<subjects.get(i).getTodos().toArray().length;j++){
+                        if(subjects.get(i).getTodos().get(j).getDeadLine().equals(str)==true){
+                             all++;
+                             if(subjects.get(i).getTodos().get(j).getState()==true){
+                                 done++;
+                             }
+                        }
+                    }
+                }
+                double progress =(double)done/all*100;
+                System.out.println(str+"의 진척도>> "+(int)progress+"%");
+            }
+            default -> {System.out.println("올바르게 입력하시오");}
+        }
+    }
     private void examMenu() {
     }
 
