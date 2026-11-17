@@ -72,6 +72,7 @@ public class Menu {
         subject.getTodos().add(todo);
         System.out.println("할 일이 추가되었습니다.");
     }
+
     public void deleteTodo(){
         showSubjects();
         if (subjects.isEmpty()) return;
@@ -95,7 +96,7 @@ public class Menu {
             System.out.println("잘못된 번호입니다.");
             return;
         }
-        Todo removed_todo= todos.remove(num-1);
+        todos.remove(num-1);
         System.out.println("삭제 되었습니다.");
     }
 
@@ -146,6 +147,7 @@ public class Menu {
             default -> {System.out.println("다시 입력하세요"); modifyTodo();}
         }
     }
+
     private void examMenu() {
     }
 
