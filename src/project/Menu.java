@@ -38,7 +38,7 @@ public class Menu {
                     System.out.println("사용을 종료합니다.");
                     return;
                 }
-                
+
             }
         }
     }
