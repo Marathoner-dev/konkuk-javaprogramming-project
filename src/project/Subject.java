@@ -24,6 +24,4 @@ public class Subject {
     public List<Exam> getExams() {
         return exams;
     }
-
-
 }

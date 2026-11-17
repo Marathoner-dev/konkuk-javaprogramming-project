@@ -5,12 +5,11 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
-    private String userName;
     private List<Subject> subjects = new ArrayList<>();
     private Scanner scan = new Scanner(System.in);
 
-    public Menu(String userName) {
-        this.userName = userName;
+    public List<Subject> getSubjects() {
+        return subjects;
     }
 
     public void startMenu(Scanner scan){
@@ -24,11 +23,12 @@ public class Menu {
             System.out.print("선택 >> ");
 
             int choice = scan.nextInt();
+            scan.nextLine();
 
             switch(choice){
                 case 1 -> examMenu();
 
-                case 2 -> toDoMenu();
+                case 2 -> todoMenu();
 
                 case 3 -> subjectMenu();
 
@@ -43,7 +43,247 @@ public class Menu {
         }
     }
 
-    private void toDoMenu() {
+    private void todoMenu() {
+        while(true){
+            System.out.println("==== 할 일 ====");
+            System.out.println("1. 할 일 관리");
+            System.out.println("2. 할 일 조회");
+            System.out.println("3. 진척도 조회");
+            System.out.println("0. 뒤로 가기");
+            System.out.print("선택 >> ");
+            int choice = scan.nextInt();
+            scan.nextLine();
+            switch (choice){
+                case 1 -> manageTodo();
+                case 2 -> checkTodo();
+                case 3 -> progressShow();
+                case 0 -> {return;}
+            }
+        }
+    }
+
+
+    private void manageTodo() {
+        while(true){
+            System.out.println("==== 할 일 관리====");
+            System.out.println("1. 할 일 추가");
+            System.out.println("2. 할 일 삭제");
+            System.out.println("3. 할 일 수정");
+            System.out.println("0. 뒤로 가기");
+            System.out.print("선택 >> ");
+            int choice = scan.nextInt();
+            scan.nextLine();
+            switch (choice){
+                case 1 -> addTodo();
+                case 2 -> deleteTodo();
+                case 3 -> modifyTodo();
+                case 0 -> {return;}
+            }
+        }
+    }
+
+    public void addTodo(){
+        showSubjects();
+        if (subjects.isEmpty()) return;
+        System.out.print("과목 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+        if (num < 1 || num > subjects.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+        Subject subject = subjects.get(num - 1);
+        System.out.print("마감 날짜(8자리 숫자로 입력 ex)20261120)>> ");
+        String deadLine = scan.nextLine();
+        if(deadLine.length()!=8){
+            System.out.println("8자리숫자로 입력(ex)20261120) 하시오.");
+            return;
+        }
+        System.out.print("할 일 내용 >> ");
+        String todoName = scan.nextLine();
+        Todo todo = new Todo(deadLine, todoName);
+        todo.setState(false);
+        subject.getTodos().add(todo);
+        System.out.println("할 일이 추가되었습니다.");
+    }
+
+    public void deleteTodo(){
+        showSubjects();
+        if (subjects.isEmpty()) return;
+        System.out.print("과목 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+        if (num < 1 || num > subjects.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+        Subject subject = subjects.get(num - 1);
+        List<Todo> todos = subject.getTodos();
+        if(todos.isEmpty()){System.out.println("할일이 없습니다");return;}
+        for(int i =0;i<todos.toArray().length;i++){
+            System.out.println((i+1)+". "+todos.get(i).getTodoName());
+        }
+        System.out.println("삭제할 번호 >>");
+        num=scan.nextInt();
+        scan.nextLine();
+        if (num < 1 || num > subjects.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+        todos.remove(num-1);
+        System.out.println("삭제 되었습니다.");
+    }
+
+    public void modifyTodo(){
+        showSubjects();
+        if (subjects.isEmpty()) return;
+        System.out.print("과목 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+        if (num < 1 || num > subjects.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+        Subject subject = subjects.get(num-1);
+        List<Todo> todos=subject.getTodos();
+        for (int i = 0; i < todos.toArray().length; i++) {
+            System.out.println((i + 1) + ". " + todos.get(i).getTodoName());
+        }
+        Todo todo =todos.get(scan.nextInt()-1);
+        System.out.println("1. 할일 이름변경");
+        System.out.println("2. 마감 기한 변경");
+        System.out.println("3. 완료 상태 변경");
+        System.out.println("0. 종료");
+        int choice=scan.nextInt();
+        switch (choice){
+            case 1-> {
+                System.out.println("변경할 이름 >> ");
+                todo.setTodoName(scan.next());
+                scan.nextLine();
+                System.out.println("변경 완료");
+            }
+            case 2->{
+                System.out.println("변경할 마감 기한(8자리 숫자로 입력 ex)20261120)>>");
+                String str=scan.next();
+                scan.nextLine();
+                if(str.length()!=8) {
+                    System.out.println("마감기한은 8자리 숫자로 입력해야함! ex)20261120");
+                    break;
+                }else {
+                    todo.setDeadLine(str);
+                    System.out.println("변경 완료");
+                }
+            }
+            case 3->{
+                todo.setState(scan.nextBoolean());
+            }
+            case 0-> {return;}
+            default -> {System.out.println("다시 입력하세요"); modifyTodo();}
+        }
+    }
+
+    private void checkTodo() {
+        while(true){
+            System.out.println("==== 할 일 조회====");
+            System.out.println("1. 오늘 할 일 조회");
+            System.out.println("2. 과목별 할 일 조회");
+            System.out.println("3. 전체 할 일 조회");
+            System.out.println("0. 뒤로 가기");
+            System.out.print("선택 >> ");
+            int choice = scan.nextInt();
+            scan.nextLine();
+            switch (choice){
+                case 1 -> checkTodoByDay();
+                case 2 -> checkTodoBySub();
+                case 3 -> checkAllTodo();
+                case 0 -> {return;}
+            }
+        }
+    }
+
+    private void checkTodoByDay() {
+        System.out.print("오늘의 날짜를 8자리 숫자로 입력해주세요.(ex : 20260101) >> ");
+        String today = scan.nextLine();
+        for(Subject sub : this.getSubjects()){
+            for(Todo todo : sub.getTodos()){
+                if(todo.getDeadLine().equals(today)){
+                    System.out.println("과목 : " + sub.getName() + ", 내용 : " + todo.getTodoName() + ", 완료 여부 : " + todo.getState());
+                }
+            }
+        }
+        System.out.println("=============================");
+    }
+
+    private void checkTodoBySub() {
+        System.out.print("조회할 과목을 입력해주세요. >>");
+        String checkSub = scan.nextLine();
+        boolean ch = false;
+        for(Subject sub : this.getSubjects()){
+            if (sub.getName().equals(checkSub)){
+                ch = true;
+                for(Todo todo : sub.getTodos()){
+                    System.out.println("종료일 : " + todo.getDeadLine() + ", 내용 : " + todo.getTodoName() + ", 완료 여부 :" + todo.getState());
+                }
+            }
+        }
+        if (!ch){
+            System.out.println("해당 과목이 없습니다.");
+        }
+        System.out.println("=============================");
+    }
+
+    private void checkAllTodo() {
+        for(Subject sub : this.getSubjects()){
+            for(Todo todo : sub.getTodos()){
+                System.out.println("과목 : " + sub.getName() + ", 내용 : " + todo.getTodoName() + ", 완료 여부 : " + todo.getState());
+            }
+        }
+        System.out.println("=============================");
+    }
+
+    public void progressShow(){
+        showSubjects();
+        System.out.println("1.과목별 진척도");
+        System.out.println("2.날 진척도");
+        int choice=scan.nextInt();
+        switch (choice){
+            case 1->{
+                System.out.println("과목 선택>> ");
+                int num=scan.nextInt();
+                if (num < 1 || num > subjects.size()) {
+                    System.out.println("잘못된 번호입니다.");
+                    return;
+                }
+                Subject sub=subjects.get(num-1);
+                int done=0;
+                for(int i=0;i<sub.getTodos().toArray().length;i++){
+                    if(sub.getTodos().get(i).getState()==true){done++;}
+                }
+                double progress=(double)done/sub.getTodos().size()*100;
+                System.out.println(sub.getName()+"의 진척도 : "+(int)progress+"%");
+            }
+            case 2->{
+                String str= scan.next();
+                scan.nextLine();
+                if(str.length()!=8){
+                    System.out.println("기간은 8자리로 작성하시오! ex)20261120");return;
+                }
+                int all=0;int done=0;
+                for(int i=0;i<subjects.toArray().length;i++){
+                    for(int j=0;j<subjects.get(i).getTodos().toArray().length;j++){
+                        if(subjects.get(i).getTodos().get(j).getDeadLine().equals(str)==true){
+                            all++;
+                            if(subjects.get(i).getTodos().get(j).getState()==true){
+                                done++;
+                            }
+                        }
+                    }
+                }
+                double progress =(double)done/all*100;
+                System.out.println(str+"의 진척도>> "+(int)progress+"%");
+            }
+            default -> {System.out.println("올바르게 입력하시오");}
+        }
     }
 
     private void examMenu() {
@@ -68,6 +308,7 @@ public class Menu {
             }
         }
     }
+
     public void addSubject() {
         System.out.print("추가할 과목명 >> ");
         String name = scan.nextLine();
@@ -92,6 +333,7 @@ public class Menu {
         Subject removed_subject = subjects.remove(num - 1);
         System.out.println(removed_subject.getName() + "이/가 삭제되었습니다.");
     }
+
     public void showSubjects() {
         if (subjects.isEmpty()) {
             System.out.println("등록된 과목이 없습니다.");
