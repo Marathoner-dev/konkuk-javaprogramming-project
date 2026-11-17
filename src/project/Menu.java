@@ -2,6 +2,7 @@ package project;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Scanner;
 
 public class Menu {
@@ -44,8 +45,107 @@ public class Menu {
     }
 
     private void toDoMenu() {
+
     }
 
+    public void addTodo(){
+        showSubjects();
+        if (subjects.isEmpty()) return;
+        System.out.print("과목 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+        if (num < 1 || num > subjects.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+        Subject subject = subjects.get(num - 1);
+        System.out.print("마감 날짜(8자리 숫자로 입력 ex)20261120)>> ");
+        String deadLine = scan.nextLine();
+        if(deadLine.length()!=8){
+            System.out.println("8자리숫자로 입력(ex)20261120) 하시오.");
+            return;
+        }
+        System.out.print("할 일 내용 >> ");
+        String todoName = scan.nextLine();
+        Todo todo = new Todo(deadLine, todoName);
+        todo.setState(false);
+        subject.getTodos().add(todo);
+        System.out.println("할 일이 추가되었습니다.");
+    }
+    public void deleteTodo(){
+        showSubjects();
+        if (subjects.isEmpty()) return;
+        System.out.print("과목 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+        if (num < 1 || num > subjects.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+        Subject subject = subjects.get(num - 1);
+        List<Todo> todos = subject.getTodos();
+        if(todos.isEmpty()){System.out.println("할일이 없습니다");return;}
+        for(int i =0;i<todos.toArray().length;i++){
+            System.out.println((i+1)+". "+todos.get(i).getTodoName());
+        }
+        System.out.println("삭제할 번호 >>");
+        num=scan.nextInt();
+        scan.nextLine();
+        if (num < 1 || num > subjects.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+        Todo removed_todo= todos.remove(num-1);
+        System.out.println("삭제 되었습니다.");
+    }
+
+    public void modifyTodo(){
+        showSubjects();
+        if (subjects.isEmpty()) return;
+        System.out.print("과목 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+        if (num < 1 || num > subjects.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+        Subject subject = subjects.get(num-1);
+        List<Todo> todos=subject.getTodos();
+        for (int i = 0; i < todos.toArray().length; i++) {
+            System.out.println((i + 1) + ". " + todos.get(i).getTodoName());
+        }
+        Todo todo =todos.get(scan.nextInt()-1);
+        System.out.println("1. 할일 이름변경");
+        System.out.println("2. 마감 기한 변경");
+        System.out.println("3. 완료 상태 변경");
+        System.out.println("0. 종료");
+        int choice=scan.nextInt();
+        switch (choice){
+            case 1-> {
+                System.out.println("변경할 이름 >> ");
+                todo.setTodoName(scan.next());
+                scan.nextLine();
+                System.out.println("변경 완료");
+            }
+            case 2->{
+                System.out.println("변경할 마감 기한(8자리 숫자로 입력 ex)20261120)>>");
+                String str=scan.next();
+                scan.nextLine();
+                if(str.length()!=8) {
+                    System.out.println("마감기한은 8자리 숫자로 입력해야함! ex)20261120");
+                    break;
+                }else {
+                    todo.setDeadLine(str);
+                    System.out.println("변경 완료");
+                }
+            }
+            case 3->{
+                todo.setState(scan.nextBoolean());
+            }
+            case 0-> {return;}
+            default -> {System.out.println("다시 입력하세요"); modifyTodo();}
+        }
+    }
     private void examMenu() {
     }
 
