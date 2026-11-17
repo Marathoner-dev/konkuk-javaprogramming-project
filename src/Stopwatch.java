@@ -27,26 +27,26 @@ public class Stopwatch {
         }
     }
 
-    public void reset(){
-        startTime=0;
-        stockedTime=0;
-        isRunning=false;
+    public void reset() {
+        startTime = 0;
+        stockedTime = 0;
+        isRunning = false;
     }
 
-    public long getStockedTime(){
+    public long getStockedTime() {
         long totalTime = stockedTime;
-        if(isRunning){
-            totalTime +=System.nanoTime()-startTime;
+        if (isRunning) {
+            totalTime += System.nanoTime() - startTime;
         }
-        return totalTime/1000000000;
+        return totalTime / 1000000000;
     }
 
-    public String getFormattedTime(){
+    public String getFormattedTime() {
         long seconds = getStockedTime();
-        long hour = seconds/3600;
-        long minute=(seconds%3600)/60;
-        long second = seconds%60;
-        return String.format("%02d:%02d:%02d",hour,minute,second);
+        long hour = seconds / 3600;
+        long minute = (seconds % 3600) / 60;
+        long second = seconds % 60;
+        return String.format("%02d:%02d:%02d", hour, minute, second);
     }
 
 }
