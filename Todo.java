@@ -1,9 +1,9 @@
 package project;
 
 public class Todo {
-    String deadLine;
-    String todoName;
-    Boolean state;
+    private String deadLine;
+    private String todoName;
+    private Boolean state;
 
     public Todo(String deadLine, String todoName) {
         this.deadLine = deadLine;
@@ -11,7 +11,7 @@ public class Todo {
     }
 
     public String getDeadLine() {
-        return deadLine;
+        return this.deadLine;
     }
 
     public void setDeadLine(String deadLine) {
@@ -19,7 +19,7 @@ public class Todo {
     }
 
     public String getTodoName() {
-        return todoName;
+        return this.todoName;
     }
 
     public void setTodoName(String todoName) {
@@ -27,7 +27,7 @@ public class Todo {
     }
 
     public Boolean getState() {
-        return state;
+        return this.state;
     }
 
     public void setState(Boolean state) {

@@ -1,8 +1,8 @@
 package project;
 
 public class Exam {
-    String theDay;
-    String examName;
+    private String theDay;
+    private String examName;
 
     public Exam(String theDay, String examName) {
         this.theDay = theDay;
@@ -10,7 +10,7 @@ public class Exam {
     }
 
     public String getTheDay() {
-        return theDay;
+        return this.theDay;
     }
 
     public void setTheDay(String theDay) {
@@ -18,7 +18,7 @@ public class Exam {
     }
 
     public String getExamName() {
-        return examName;
+        return this.examName;
     }
 
     public void setExamName(String examName) {
