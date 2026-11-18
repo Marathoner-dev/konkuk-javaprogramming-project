@@ -1,4 +1,4 @@
-package project;
+package project.src.project;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ public class Subject {
     private String name;
     private List<Todo> todos = new ArrayList<>();
     private List<Exam> exams = new ArrayList<>();
+    private List<WrongAnswerNote> wrongAnswers = new ArrayList<>();
 
     public Subject(String name) {
         this.name = name;
@@ -23,5 +24,15 @@ public class Subject {
 
     public List<Exam> getExams() {
         return exams;
+    }
+
+    public List<WrongAnswerNote> getWrongAnswers(){return wrongAnswers;}
+
+    public void addWrongAnswer(WrongAnswerNote note) {
+        wrongAnswers.add(note);
+    }
+
+    public void removeWrongAnswer(int index) {
+        wrongAnswers.remove(index);
     }
 }

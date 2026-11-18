@@ -1,4 +1,4 @@
-package project;
+package project.src.project;
 
 public class Stopwatch {
 
@@ -6,11 +6,16 @@ public class Stopwatch {
     private long stockedTime;
     private boolean isRunning;
 
-    public void start() {
-        if (!isRunning && stockedTime == 0) {
+    public boolean start() {
+        if (isRunning) {
+            return false;
+        }
+        if (stockedTime == 0) {
             startTime = System.nanoTime();
             isRunning = true;
+            return true;
         }
+        return false;
     }
 
     public void stop() {

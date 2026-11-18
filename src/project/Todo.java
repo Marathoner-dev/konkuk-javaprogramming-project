@@ -1,4 +1,4 @@
-package project;
+package project.src.project;
 
 public class Todo {
     private String deadLine;
