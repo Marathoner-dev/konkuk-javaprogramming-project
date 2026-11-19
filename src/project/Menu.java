@@ -1,4 +1,4 @@
-package project;
+package project.src.project;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +12,14 @@ public class Menu {
         return subjects;
     }
 
-    public void startMenu(Scanner scan){
+    public void startMenu(){
         while(true){
-            System.out.print("====기능 선택 ====");
+            System.out.println("====기능 선택 ====");
             System.out.println("1. 시험 일정");
             System.out.println("2. 할 일");
             System.out.println("3. 과목");
             System.out.println("4. 스탑워치");
+            System.out.println("5. 오답노트");
             System.out.println("0. 종료");
             System.out.print("선택 >> ");
 
@@ -33,6 +34,8 @@ public class Menu {
                 case 3 -> subjectMenu();
 
                 case 4 -> stopwatchMenu();
+
+                case 5 -> wrongAnswerMenu();
 
                 case 0 -> {
                     System.out.println("사용을 종료합니다.");
@@ -362,10 +365,12 @@ public class Menu {
 
             switch (choice) {
                 case 1:
-                    stopwatch.start();
-                    System.out.println("스탑워치를 시작했습니다.");
+                    if (stopwatch.start()) {
+                        System.out.println("스탑워치를 시작했습니다.");
+                    } else {
+                        System.out.println("이미 시작되었습니다.");
+                    }
                     break;
-
                 case 2:
                     stopwatch.stop();
                     System.out.println("스탑워치를 정지했습니다.");
@@ -395,6 +400,124 @@ public class Menu {
         }
     }
 
+    private void wrongAnswerMenu() {
+        while (true) {
+            System.out.println("\n===== 오답노트 =====");
+            System.out.println("1. 오답 추가");
+            System.out.println("2. 오답 조회");
+            System.out.println("3. 오답 삭제");
+            System.out.println("0. 메인 메뉴로 돌아가기");
+            System.out.print("선택 >> ");
 
+            int choice = scan.nextInt();
+            scan.nextLine();
+
+            switch (choice) {
+                case 1 -> addWrongAnswer();
+                case 2 -> showWrongAnswers();
+                case 3 -> deleteWrongAnswer();
+                case 0 -> { return; }
+                default -> System.out.println("잘못된 번호입니다.");
+            }
+        }
+    }
+
+    private Subject selectSubject() {
+        showSubjects();
+
+        if (subjects.isEmpty()) {
+            return null;
+        }
+
+        System.out.print("과목 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+
+        if (num < 1 || num > subjects.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return null;
+        }
+
+        return subjects.get(num - 1);
+    }
+
+    private void addWrongAnswer() {
+        Subject subject = selectSubject();
+
+        if (subject == null) return;
+
+        System.out.print("문제 내용 >> ");
+        String question = scan.nextLine();
+
+        System.out.print("내 답 >> ");
+        String myAnswer = scan.nextLine();
+
+        System.out.print("정답 >> ");
+        String correctAnswer = scan.nextLine();
+
+        System.out.print("해설 >> ");
+        String explanation = scan.nextLine();
+
+        WrongAnswerNote note = new WrongAnswerNote(question, myAnswer, correctAnswer, explanation);
+
+        subject.addWrongAnswer(note);
+
+        System.out.println("오답이 추가되었습니다.");
+    }
+
+    private void showWrongAnswers() {
+        Subject subject = selectSubject();
+
+        if (subject == null) return;
+
+        List<WrongAnswerNote> notes = subject.getWrongAnswers();
+
+        if (notes.isEmpty()) {
+            System.out.println("등록된 오답이 없습니다.");
+            return;
+        }
+
+        System.out.println("\n===== " + subject.getName() + " 오답 목록 =====");
+
+        for (int i = 0; i < notes.size(); i++) {
+            WrongAnswerNote note = notes.get(i);
+
+            System.out.println("\n[" + (i + 1) + "번 오답]");
+            System.out.println("문제 : " + note.getQuestion());
+            System.out.println("내 답 : " + note.getMyAnswer());
+            System.out.println("정답 : " + note.getCorrectAnswer());
+            System.out.println("해설 : " + note.getExplanation());
+        }
+    }
+
+    private void deleteWrongAnswer() {
+        Subject subject = selectSubject();
+
+        if (subject == null) return;
+
+        List<WrongAnswerNote> notes = subject.getWrongAnswers();
+
+        if (notes.isEmpty()) {
+            System.out.println("삭제할 오답이 없습니다.");
+            return;
+        }
+
+        for (int i = 0; i < notes.size(); i++) {
+            System.out.println((i + 1) + ". " + notes.get(i).getQuestion());
+        }
+
+        System.out.print("삭제할 오답 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+
+        if (num < 1 || num > notes.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+
+        subject.removeWrongAnswer(num - 1);
+
+        System.out.println("오답이 삭제되었습니다.");
+    }
 }
 

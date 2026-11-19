@@ -1,4 +1,4 @@
-package project;
+package project.src.project;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -6,8 +6,12 @@ import java.util.List;
 import java.util.Scanner;
 
 public class FileIO {
-    private List<Subject> subjects = new ArrayList<>();
+    private List<Subject> subjects;
     private File file = new File("res/data.txt");
+    public FileIO(List<Subject> subjects) {
+        this.subjects = subjects;
+    }
+
     public void save() {
         try {
             PrintWriter writer = new PrintWriter(new FileWriter(file));
@@ -29,6 +33,14 @@ public class FileIO {
                     writer.print("|" + exam.getExamName());
                 }
 
+                writer.print("|" + subject.getWrongAnswers().size());
+
+                for (WrongAnswerNote note : subject.getWrongAnswers()) {
+                    writer.print("|" + note.getQuestion());
+                    writer.print("|" + note.getMyAnswer());
+                    writer.print("|" + note.getCorrectAnswer());
+                    writer.print("|" + note.getExplanation());
+                }
                 writer.println();
             }
 
@@ -86,8 +98,24 @@ public class FileIO {
                     subject.getExams().add(exam);
                 }
 
+                int wrongAnswerCount = Integer.parseInt(data[index++]);
+
+                for (int i = 0; i < wrongAnswerCount; i++) {
+                    String question = data[index++];
+                    String myAnswer = data[index++];
+                    String correctAnswer = data[index++];
+                    String explanation = data[index++];
+
+                    WrongAnswerNote note = new WrongAnswerNote(
+                            question, myAnswer, correctAnswer, explanation
+                    );
+
+                    subject.addWrongAnswer(note);
+                }
+
                 subjects.add(subject);
             }
+
 
             scanner.close();
 
