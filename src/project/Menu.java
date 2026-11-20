@@ -157,13 +157,14 @@ public class Menu {
         System.out.println("2. 마감 기한 변경");
         System.out.println("3. 완료 상태 변경");
         System.out.println("0. 종료");
-        int choice=scan.nextInt();
+        int choice = scan.nextInt();
         switch (choice){
             case 1-> {
                 System.out.println("변경할 이름 >> ");
                 todo.setTodoName(scan.next());
                 scan.nextLine();
                 System.out.println("변경 완료");
+                break;
             }
             case 2->{
                 System.out.println("변경할 마감 기한(8자리 숫자로 입력 ex)20261120)>>");
@@ -177,8 +178,10 @@ public class Menu {
                     System.out.println("변경 완료");
                 }
             }
-            case 3->{
-                todo.setState(scan.nextBoolean());
+            case 3-> {
+                System.out.println("완료 상태를 입력해주십시오 : (True/False)");
+                Boolean status = scan.nextBoolean();
+                todo.setState(status);
             }
             case 0-> {return;}
             default -> {System.out.println("다시 입력하세요"); modifyTodo();}
@@ -188,7 +191,7 @@ public class Menu {
     private void checkTodo() {
         while(true){
             System.out.println("==== 할 일 조회====");
-            System.out.println("1. 오늘 할 일 조회");
+            System.out.println("1. 일자별 할 일 조회");
             System.out.println("2. 과목별 할 일 조회");
             System.out.println("3. 전체 할 일 조회");
             System.out.println("0. 뒤로 가기");
@@ -205,7 +208,7 @@ public class Menu {
     }
 
     private void checkTodoByDay() {
-        System.out.print("오늘의 날짜를 8자리 숫자로 입력해주세요.(ex : 20260101) >> ");
+        System.out.print("조회 날짜를 8자리 숫자로 입력해주세요.(ex : 20260101) >> ");
         String today = scan.nextLine();
         for(Subject sub : this.getSubjects()){
             for(Todo todo : sub.getTodos()){
@@ -251,7 +254,7 @@ public class Menu {
         int choice=scan.nextInt();
         switch (choice){
             case 1->{
-                System.out.println("과목 선택>> ");
+                System.out.print("과목 선택>> ");
                 int num=scan.nextInt();
                 if (num < 1 || num > subjects.size()) {
                     System.out.println("잘못된 번호입니다.");
@@ -266,6 +269,7 @@ public class Menu {
                 System.out.println(sub.getName()+"의 진척도 : "+(int)progress+"%");
             }
             case 2->{
+                System.out.print("조회할 날짜를 8자리 숫자로 입력해주세요.(ex : 20260101) >> ");
                 String str= scan.next();
                 scan.nextLine();
                 if(str.length()!=8){
@@ -287,9 +291,6 @@ public class Menu {
             }
             default -> {System.out.println("올바르게 입력하시오");}
         }
-    }
-
-    private void examMenu() {
     }
 
     public void subjectMenu() {
@@ -346,6 +347,169 @@ public class Menu {
         for (int i = 0; i <subjects.size(); i++) {
             System.out.println((i+1)+ ". " + subjects.get(i).getName());
         }
+    }
+
+    private void examMenu() {
+        while (true) {
+            System.out.println("\n===== 시험 일정 =====");
+            System.out.println("1. 시험 추가");
+            System.out.println("2. 시험 조회");
+            System.out.println("3. 시험 수정");
+            System.out.println("4. 시험 삭제");
+            System.out.println("0. 메인 메뉴로 돌아가기");
+            System.out.print("선택 >> ");
+
+            int choice = scan.nextInt();
+            scan.nextLine();
+
+            switch (choice) {
+                case 1 -> addExam();
+                case 2 -> showExams();
+                case 3 -> modifyExam();
+                case 4 -> deleteExam();
+                case 0 -> { return; }
+                default -> System.out.println("잘못된 번호입니다.");
+            }
+        }
+    }
+
+    private void addExam() {
+        Subject subject = selectSubject();
+        if (subject == null) return;
+
+        System.out.print("시험 날짜(8자리 숫자로 입력 ex)20261120) >> ");
+        String theDay = scan.nextLine();
+        if (theDay.length() != 8) {
+            System.out.println("8자리 숫자로 입력(ex)20261120) 하시오.");
+            return;
+        }
+
+        System.out.print("시험 이름(ex)중간고사, 기말고사) >> ");
+        String examName = scan.nextLine();
+
+        Exam exam = new Exam(theDay, examName);
+        subject.getExams().add(exam);
+        System.out.println("시험 일정이 추가되었습니다.");
+    }
+
+    private void showExams() {
+        System.out.println("1. 과목별 시험 조회");
+        System.out.println("2. 전체 시험 조회");
+        System.out.print("선택 >> ");
+        int choice = scan.nextInt();
+        scan.nextLine();
+
+        if (choice == 1) {
+            Subject subject = selectSubject();
+            if (subject == null) return;
+
+            List<Exam> exams = subject.getExams();
+            if (exams.isEmpty()) {
+                System.out.println("등록된 시험 일정이 없습니다.");
+                return;
+            }
+
+            System.out.println("\n===== " + subject.getName() + " 시험 일정 =====");
+            for (int i = 0; i < exams.size(); i++) {
+                Exam exam = exams.get(i);
+                System.out.println((i + 1) + ". [" + exam.getTheDay() + "] " + exam.getExamName());
+            }
+        } else if (choice == 2) {
+            boolean hasExam = false;
+            System.out.println("\n===== 전체 시험 일정 =====");
+            for (Subject sub : subjects) {
+                for (Exam exam : sub.getExams()) {
+                    hasExam = true;
+                    System.out.println("과목: " + sub.getName() + " | 날짜: " + exam.getTheDay() + " | 시험명: " + exam.getExamName());
+                }
+            }
+            if (!hasExam) {
+                System.out.println("등록된 시험 일정이 없습니다.");
+            }
+        } else {
+            System.out.println("잘못된 번호입니다.");
+        }
+    }
+
+    private void modifyExam() {
+        Subject subject = selectSubject();
+        if (subject == null) return;
+
+        List<Exam> exams = subject.getExams();
+        if (exams.isEmpty()) {
+            System.out.println("수정할 시험 일정이 없습니다.");
+            return;
+        }
+
+        for (int i = 0; i < exams.size(); i++) {
+            System.out.println((i + 1) + ". [" + exams.get(i).getTheDay() + "] " + exams.get(i).getExamName());
+        }
+
+        System.out.print("수정할 시험 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+
+        if (num < 1 || num > exams.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+
+        Exam exam = exams.get(num - 1);
+
+        System.out.println("1. 시험 날짜 변경");
+        System.out.println("2. 시험 이름 변경");
+        System.out.println("0. 취소");
+        System.out.print("선택 >> ");
+        int choice = scan.nextInt();
+        scan.nextLine();
+
+        switch (choice) {
+            case 1 -> {
+                System.out.print("변경할 날짜(8자리 숫자로 입력 ex)20261120) >> ");
+                String newDay = scan.nextLine();
+                if (newDay.length() != 8) {
+                    System.out.println("8자리 숫자로 입력해야 합니다.");
+                    return;
+                }
+                exam.setTheDay(newDay);
+                System.out.println("시험 날짜가 변경되었습니다.");
+            }
+            case 2 -> {
+                System.out.print("변경할 시험 이름 >> ");
+                String newName = scan.nextLine();
+                exam.setExamName(newName);
+                System.out.println("시험 이름이 변경되었습니다.");
+            }
+            case 0 -> { return; }
+            default -> System.out.println("잘못된 번호입니다.");
+        }
+    }
+
+    private void deleteExam() {
+        Subject subject = selectSubject();
+        if (subject == null) return;
+
+        List<Exam> exams = subject.getExams();
+        if (exams.isEmpty()) {
+            System.out.println("삭제할 시험 일정이 없습니다.");
+            return;
+        }
+
+        for (int i = 0; i < exams.size(); i++) {
+            System.out.println((i + 1) + ". [" + exams.get(i).getTheDay() + "] " + exams.get(i).getExamName());
+        }
+
+        System.out.print("삭제할 시험 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+
+        if (num < 1 || num > exams.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+
+        exams.remove(num - 1);
+        System.out.println("시험 일정이 삭제되었습니다.");
     }
 
     private Stopwatch stopwatch = new Stopwatch();
