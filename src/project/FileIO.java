@@ -2,14 +2,13 @@ package project;
 
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
 
 public class FileIO {
-    private List<Subject> subjects;
+    private Set<Subject> subjects;
     private File file = new File("res/data.txt");
-    public FileIO(List<Subject> subjects) {
+    public FileIO(Set<Subject> subjects) {
         this.subjects = subjects;
     }
 

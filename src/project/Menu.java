@@ -3,12 +3,14 @@ package project;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.LinkedHashSet;
 
 public class Menu {
-    private List<Subject> subjects = new ArrayList<>();
+    private Set<Subject> subjects = new LinkedHashSet<>();
     private Scanner scan = new Scanner(System.in);
 
-    public List<Subject> getSubjects() {
+    public Set<Subject> getSubjects() {
         return subjects;
     }
 
@@ -95,7 +97,7 @@ public class Menu {
             System.out.println("잘못된 번호입니다.");
             return;
         }
-        Subject subject = subjects.get(num - 1);
+        Subject subject = getSubjectByIndex(num - 1);
         System.out.print("마감 날짜(8자리 숫자로 입력 ex)20261120)>> ");
         String deadLine = scan.nextLine();
         if(deadLine.length()!=8){
@@ -120,7 +122,7 @@ public class Menu {
             System.out.println("잘못된 번호입니다.");
             return;
         }
-        Subject subject = subjects.get(num - 1);
+        Subject subject = getSubjectByIndex(num - 1);
         List<Todo> todos = subject.getTodos();
         if(todos.isEmpty()){System.out.println("할일이 없습니다");return;}
         for(int i =0;i<todos.toArray().length;i++){
@@ -147,7 +149,7 @@ public class Menu {
             System.out.println("잘못된 번호입니다.");
             return;
         }
-        Subject subject = subjects.get(num-1);
+        Subject subject = getSubjectByIndex(num - 1);
         List<Todo> todos=subject.getTodos();
         for (int i = 0; i < todos.toArray().length; i++) {
             System.out.println((i + 1) + ". " + todos.get(i).getTodoName());
@@ -268,9 +270,9 @@ public class Menu {
                     System.out.println("잘못된 번호입니다.");
                     return;
                 }
-                Subject sub=subjects.get(num-1);
+                Subject sub = getSubjectByIndex(num - 1); // 수정됨
                 int done=0;
-                for(int i=0;i<sub.getTodos().toArray().length;i++){
+                for(int i=0;i<sub.getTodos().size();i++){
                     if(sub.getTodos().get(i).getState()==true){done++;}
                 }
                 double progress=(double)done/sub.getTodos().size()*100;
@@ -283,11 +285,11 @@ public class Menu {
                     System.out.println("기간은 8자리로 작성하시오! ex)20261120");return;
                 }
                 int all=0;int done=0;
-                for(int i=0;i<subjects.toArray().length;i++){
-                    for(int j=0;j<subjects.get(i).getTodos().toArray().length;j++){
-                        if(subjects.get(i).getTodos().get(j).getDeadLine().equals(str)==true){
+                for (Subject sub : subjects) { // for-each로 수정됨
+                    for (Todo todo : sub.getTodos()) {
+                        if (todo.getDeadLine().equals(str)) {
                             all++;
-                            if(subjects.get(i).getTodos().get(j).getState()==true){
+                            if (todo.getState()) {
                                 done++;
                             }
                         }
@@ -330,7 +332,7 @@ public class Menu {
             System.out.println("잘못된 번호입니다.");
             return;
         }
-        Subject subject = subjects.get(num - 1);
+        Subject subject = getSubjectByIndex(num - 1);
         System.out.print("마감 날짜(8자리 숫자로 입력 ex)20261120)>> ");
         String theDay = scan.nextLine();
         if(theDay.length()!=8){
@@ -355,7 +357,7 @@ public class Menu {
             System.out.println("잘못된 번호입니다.");
             return;
         }
-        Subject subject = subjects.get(num - 1);
+        Subject subject = getSubjectByIndex(num - 1);
         List<Exam> exams = subject.getExams();
         if(exams.isEmpty()){System.out.println("시험이 없습니다");return;}
         for(int i =0;i<exams.toArray().length;i++){
@@ -406,25 +408,28 @@ public class Menu {
         System.out.print("추가할 과목명 >> ");
         String name = scan.nextLine();
         Subject subject = new Subject(name);
-        subjects.add(subject);
-        System.out.println(name + " 과목이 추가되었습니다.");
+        if (subjects.add(subject)) {
+            System.out.println(name + " 과목이 추가되었습니다.");
+        } else {
+            System.out.println("이미 존재하는 과목입니다.");
+        }
     }
     public void deleteSubject() {
         showSubjects();
-        int num;
         if (subjects.isEmpty()) {
             System.out.println("과목 리스트가 비어 있습니다.");
             return;
         }
         System.out.print("삭제할 과목 번호 >> ");
-        num = scan.nextInt();
+        int num = scan.nextInt();
         scan.nextLine();
-        if (num <=0 || num > subjects.size()) {
+        if (num <= 0 || num > subjects.size()) {
             System.out.println("잘못된 번호입니다.");
             return;
         }
-        Subject removed_subject = subjects.remove(num - 1);
-        System.out.println(removed_subject.getName() + "이/가 삭제되었습니다.");
+        Subject target = getSubjectByIndex(num - 1);
+        subjects.remove(target);
+        System.out.println(target.getName() + "이/가 삭제되었습니다.");
     }
 
     public void showSubjects() {
@@ -433,8 +438,9 @@ public class Menu {
             return;
         }
         System.out.println("===== 과목 목록 =====");
-        for (int i = 0; i <subjects.size(); i++) {
-            System.out.println((i+1)+ ". " + subjects.get(i).getName());
+        int i = 1;
+        for (Subject sub : subjects) {
+            System.out.println((i++) + ". " + sub.getName());
         }
     }
 
@@ -529,7 +535,7 @@ public class Menu {
             return null;
         }
 
-        return subjects.get(num - 1);
+        return getSubjectByIndex(num - 1);
     }
 
     private void addWrongAnswer() {
@@ -609,6 +615,17 @@ public class Menu {
         subject.removeWrongAnswer(num - 1);
 
         System.out.println("오답이 삭제되었습니다.");
+    }
+
+    private Subject getSubjectByIndex(int index) {
+        int i = 0;
+        for (Subject s : subjects) {
+            if (i == index) {
+                return s;
+            }
+            i++;
+        }
+        return null;
     }
 }
 
