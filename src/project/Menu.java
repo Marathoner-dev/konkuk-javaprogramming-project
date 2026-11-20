@@ -129,7 +129,7 @@ public class Menu {
         System.out.println("삭제할 번호 >>");
         num=scan.nextInt();
         scan.nextLine();
-        if (num < 1 || num > subjects.size()) {
+        if (num < 1 || num > todos.size()) {
             System.out.println("잘못된 번호입니다.");
             return;
         }
@@ -301,6 +301,85 @@ public class Menu {
     }
 
     private void examMenu() {
+        while (true) {
+            System.out.println("===== 시험 =====");
+            System.out.println("1.시험 추가");
+            System.out.println("2.시험 삭제");
+            System.out.println("3.시험 조회");
+            System.out.println("0.뒤로 가기");
+            System.out.print("선택 >> ");
+            int choice = scan.nextInt();
+            scan.nextLine();
+            switch (choice) {
+                case 1 -> {addExam();}
+                case 2 -> {deleteExam();}
+                case 3 -> {showExams();}
+                case 0 -> {return;}
+                default -> {System.out.println("다시 입력하세요");}
+            }
+        }
+    }
+
+    private void addExam() {
+        showSubjects();
+        if (subjects.isEmpty()) return;
+        System.out.print("과목 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+        if (num < 1 || num > subjects.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+        Subject subject = subjects.get(num - 1);
+        System.out.print("마감 날짜(8자리 숫자로 입력 ex)20261120)>> ");
+        String theDay = scan.nextLine();
+        if(theDay.length()!=8){
+            System.out.println("8자리숫자로 입력(ex)20261120) 하시오.");
+            return;
+        }
+        System.out.print("시험 이름 >> ");
+        String examName = scan.nextLine();
+        Exam exam = new Exam(theDay, examName);
+        subject.getExams().add(exam);
+        System.out.println("시험이 추가되었습니다.");
+        System.out.println("=============================");
+    }
+
+    private void deleteExam() {
+        showSubjects();
+        if (subjects.isEmpty()) return;
+        System.out.print("과목 번호 >> ");
+        int num = scan.nextInt();
+        scan.nextLine();
+        if (num < 1 || num > subjects.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+        Subject subject = subjects.get(num - 1);
+        List<Exam> exams = subject.getExams();
+        if(exams.isEmpty()){System.out.println("시험이 없습니다");return;}
+        for(int i =0;i<exams.toArray().length;i++){
+            System.out.println((i+1)+". "+exams.get(i).getExamName());
+        }
+        System.out.println("삭제할 번호 >>");
+        num=scan.nextInt();
+        scan.nextLine();
+        if (num < 1 || num > exams.size()) {
+            System.out.println("잘못된 번호입니다.");
+            return;
+        }
+        exams.remove(num-1);
+        System.out.println("삭제 되었습니다.");
+    }
+
+
+    private void showExams() {
+        for(Subject sub : this.getSubjects()){
+            for(Exam exam : sub.getExams()){
+                System.out.println("과목 : " + sub.getName() + ", 시험 : " + exam.getExamName() + ", 시험일 : " + exam.getTheDay());
+            }
+        }
+        System.out.println("=============================");
     }
 
     public void subjectMenu() {
@@ -373,6 +452,7 @@ public class Menu {
             System.out.print("선택 >> ");
 
             int choice = scan.nextInt();
+            scan.nextLine();
 
             switch (choice) {
                 case 1:
