@@ -1,4 +1,4 @@
-package project.src.project;
+package project;
 
 public class Exam {
     private String theDay;
