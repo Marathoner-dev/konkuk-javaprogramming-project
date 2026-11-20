@@ -152,12 +152,15 @@ public class Menu {
         for (int i = 0; i < todos.toArray().length; i++) {
             System.out.println((i + 1) + ". " + todos.get(i).getTodoName());
         }
+        System.out.print("할일 번호 >> ");
         Todo todo =todos.get(scan.nextInt()-1);
-        System.out.println("1. 할일 이름변경");
-        System.out.println("2. 마감 기한 변경");
-        System.out.println("3. 완료 상태 변경");
-        System.out.println("0. 종료");
+        scan.nextLine();
         while(true){
+            System.out.println("1. 할일 이름변경");
+            System.out.println("2. 마감 기한 변경");
+            System.out.println("3. 완료 상태 변경");
+            System.out.println("0. 종료");
+            System.out.print("번호 입력 >> ");
             int choice=scan.nextInt();
             scan.nextLine();
             switch (choice) {
@@ -180,7 +183,7 @@ public class Menu {
                     }
                 }
                 case 3 -> {
-                    todo.setState(scan.nextBoolean());
+                    todo.setState(!todo.getState());
                     System.out.println("변경 완료");
                 }
                 case 0 -> {
