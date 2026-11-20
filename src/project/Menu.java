@@ -157,39 +157,31 @@ public class Menu {
         System.out.println("2. 마감 기한 변경");
         System.out.println("3. 완료 상태 변경");
         System.out.println("0. 종료");
-        while (true){
-            int choice=scan.nextInt();
-            scan.nextLine();
-            switch (choice) {
-                case 1 -> {
-                    System.out.println("변경할 이름 >> ");
-                    todo.setTodoName(scan.next());
-                    scan.nextLine();
+        int choice=scan.nextInt();
+        switch (choice){
+            case 1-> {
+                System.out.println("변경할 이름 >> ");
+                todo.setTodoName(scan.next());
+                scan.nextLine();
+                System.out.println("변경 완료");
+            }
+            case 2->{
+                System.out.println("변경할 마감 기한(8자리 숫자로 입력 ex)20261120)>>");
+                String str=scan.next();
+                scan.nextLine();
+                if(str.length()!=8) {
+                    System.out.println("마감기한은 8자리 숫자로 입력해야함! ex)20261120");
+                    break;
+                }else {
+                    todo.setDeadLine(str);
                     System.out.println("변경 완료");
                 }
-                case 2 -> {
-                    System.out.println("변경할 마감 기한(8자리 숫자로 입력 ex)20261120)>>");
-                    String str = scan.next();
-                    scan.nextLine();
-                    if (str.length() != 8) {
-                        System.out.println("마감기한은 8자리 숫자로 입력해야함! ex)20261120");
-                        break;
-                    } else {
-                        todo.setDeadLine(str);
-                        System.out.println("변경 완료");
-                    }
-                }
-                case 3 -> {
-                    todo.setState(scan.nextBoolean());
-                    System.out.println("완료 상태를 변경했습니다.");
-                }
-                case 0 -> {
-                    return;
-                }
-                default -> {
-                    System.out.println("다시 입력하세요");
-                }
             }
+            case 3->{
+                todo.setState(scan.nextBoolean());
+            }
+            case 0-> {return;}
+            default -> {System.out.println("다시 입력하세요"); modifyTodo();}
         }
     }
 
