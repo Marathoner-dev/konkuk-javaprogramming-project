@@ -1,4 +1,4 @@
-package project.src.project;
+package project;
 
 public class WrongAnswerNote {
     private String question;
